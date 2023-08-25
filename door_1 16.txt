@@ -1,0 +1,75 @@
+#include<iostream>
+#include<string>
+using namespace std;
+
+
+class Door {
+public:
+	virtual void open(){}
+	virtual void close(){}
+};
+class IDoorStateNotifier{
+public: virtual void notify( string status) = 0;
+};
+
+class SecuredDoor:public Door {
+
+IDoorStateNotifier* notifierRef;
+
+public: 
+        SecuredDoor(IDoorStateNotifier* notifierRefArg): notifierRef{notifierRefArg}{}
+
+void open() override{
+this->notifierRef->notify("open");
+}
+void close() override{
+this->notifierRef->notify("close");
+}
+
+};
+
+class Buzzer: public IDoorStateNotifier{
+
+public:
+	void makeNoise(){}
+	void notify(string status ){
+	cout<< "Buzzer Notified ! Door status is ->" << status <<endl;
+	this->makeNoise();
+    }
+};
+
+class  SMSManager :public IDoorStateNotifier{
+
+	public :void sendNotificationMessage() {}
+	
+	
+void notify(string status ){
+cout<< "SMS Manager Notified! Door status is ->" << status << endl;
+this->sendNotificationMessage();
+	 }
+};
+
+class VisualizationManager {
+	public:void turnVideoOn() {}
+	public:void turnVideoOff() {}
+	
+	void notify(string status){
+	cout<< "VisualizationManager Notified! Door status is ->" << status << endl;
+
+	 }
+	
+};
+
+
+
+int main()
+{
+Door obj;
+Buzzer buzzerobj;
+SMSManager smsMgrobj;
+SecuredDoor sd1{&buzzerobj};
+
+sd1.open();
+sd1.close();
+return 0;
+}
